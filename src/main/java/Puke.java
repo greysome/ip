@@ -8,6 +8,8 @@ public class Puke {
                       + "██╔═══╝ ██║   ██║██╔═██╗ ██╔══╝  \n"
                       + "██║     ╚██████╔╝██║  ██╗███████╗\n"
                       + "╚═╝      ╚═════╝ ╚═╝  ╚═╝╚══════╝";
+        String[] tasks = new String[100];
+        int num_tasks = 0;
         Scanner scanner = new Scanner(System.in);
 
         System.out.println(banner);
@@ -16,12 +18,24 @@ public class Puke {
         while (true) {
             String cmd = scanner.nextLine();
             if (cmd.equals("bye"))
-              break;
-            else
-              System.out.println(cmd);
+                break;
+            else if (cmd.equals("list")) {
+                for (int i = 0; i < num_tasks; i++) {
+                    System.out.println("> " + tasks[i]);
+                }
+            }
+            else {
+                if (num_tasks == 100) {
+                    System.out.println("> puke wants you to stop adding more tasks");
+                }
+                else {
+                    tasks[num_tasks++] = cmd;
+                    System.out.println("> puke added: " + cmd);
+                }
+            }
         }
 
-        System.out.println("nvm i'm dipping lol bye");
+        System.out.println("> nvm i'm dipping lol bye");
         scanner.close();
     }
 }
