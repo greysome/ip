@@ -7,6 +7,11 @@ public class Task {
         this.isDone = false;
     }
 
+    @Override
+    public String toString() {
+        return String.format("[T][%s] %s", getStatusIcon(), desc);
+    }
+
     public String getStatusIcon() {
         return isDone ? "X" : " ";
     }
@@ -23,4 +28,3 @@ public class Task {
         isDone = false;
     }
 }
-

@@ -11,7 +11,7 @@ public class Puke {
                       + "╚═╝      ╚═════╝ ╚═╝  ╚═╝╚══════╝";
         Scanner scanner = new Scanner(System.in);
         Task[] tasks = new Task[100];
-        int num_tasks = 0;
+        int numTasks = 0;
 
         System.out.println(banner);
         System.out.println("hello i'm puke ask me anyth bro");
@@ -28,72 +28,150 @@ public class Puke {
                 break;
             }
 
+            else if (cmd.equals("todo")) {
+                if (numTasks == 100) {
+                    System.out.println("> puke wants you to stop adding more tasks");
+                    continue;
+                }
+
+                StringBuilder descSb = new StringBuilder();
+                while (tokenizer.hasMoreTokens()) {
+                    String token = tokenizer.nextToken();
+                    descSb.append(token);
+                    descSb.append(" ");
+                }
+                descSb.deleteCharAt(descSb.length() - 1);
+                String descStr = descSb.toString();
+                tasks[numTasks++] = new Task(descStr);
+                System.out.println(String.format("> %d. %s", numTasks, tasks[numTasks - 1].toString()));
+            }
+
+            else if (cmd.equals("deadline")) {
+                if (numTasks == 100) {
+                    System.out.println("> puke wants you to stop adding more tasks");
+                    continue;
+                }
+
+                StringBuilder descSb = new StringBuilder();
+                StringBuilder bySb = new StringBuilder();
+                while (tokenizer.hasMoreTokens()) {
+                    String token = tokenizer.nextToken();
+                    if (token.equals("/by"))
+                        break;
+                    descSb.append(token);
+                    descSb.append(" ");
+                }
+                while (tokenizer.hasMoreTokens()) {
+                    String token = tokenizer.nextToken();
+                    bySb.append(token);
+                    bySb.append(" ");
+                }
+                descSb.deleteCharAt(descSb.length() - 1);
+                bySb.deleteCharAt(bySb.length() - 1);
+                String descStr = descSb.toString();
+                String byStr = bySb.toString();
+                tasks[numTasks++] = new Deadline(descStr, byStr);
+                System.out.println(String.format("> %d. %s", numTasks, tasks[numTasks - 1].toString()));
+            }
+
+            else if (cmd.equals("event")) {
+                if (numTasks == 100) {
+                    System.out.println("> puke wants you to stop adding more tasks");
+                    continue;
+                }
+
+                StringBuilder descSb = new StringBuilder();
+                StringBuilder fromSb = new StringBuilder();
+                StringBuilder toSb = new StringBuilder();
+                while (tokenizer.hasMoreTokens()) {
+                    String token = tokenizer.nextToken();
+                    if (token.equals("/from"))
+                        break;
+                    descSb.append(token);
+                    descSb.append(" ");
+                }
+                while (tokenizer.hasMoreTokens()) {
+                    String token = tokenizer.nextToken();
+                    if (token.equals("/to"))
+                        break;
+                    fromSb.append(token);
+                    fromSb.append(" ");
+                }
+                while (tokenizer.hasMoreTokens()) {
+                    String token = tokenizer.nextToken();
+                    toSb.append(token);
+                    toSb.append(" ");
+                }
+                descSb.deleteCharAt(descSb.length() - 1);
+                fromSb.deleteCharAt(fromSb.length() - 1);
+                toSb.deleteCharAt(toSb.length() - 1);
+                String descStr = descSb.toString();
+                String fromStr = fromSb.toString();
+                String toStr = toSb.toString();
+                tasks[numTasks++] = new Event(descStr, fromStr, toStr);
+                System.out.println(String.format("> %d. %s", numTasks, tasks[numTasks - 1].toString()));
+            }
+
             else if (cmd.equals("list")) {
-                System.out.println("> puke says:");
-                for (int i = 0; i < num_tasks; i++) {
+                System.out.println("> puke is fetching your list...");
+                for (int i = 0; i < numTasks; i++) {
                     Task task = tasks[i];
-                    System.out.println(String.format("> %d. [%s] %s", i+1, task.getStatusIcon(), task.getDesc()));
+                    System.out.println(String.format("> %d. %s", i+1, task.toString()));
                 }
             }
 
             else if (cmd.equals("mark")) {
                 if (!tokenizer.hasMoreTokens()) {
-                    System.out.println("> puke says you're missing a task id!");
+                    System.out.println("> puke wants a valid task id");
                     continue;
                 }
-                String id_str = tokenizer.nextToken();
+                String idStr = tokenizer.nextToken();
                 int id;
                 try {
-                    id = Integer.parseInt(id_str);
+                    id = Integer.parseInt(idStr);
                 }
                 catch (NumberFormatException e) {
-                    System.out.println("> puke says that's not a number!");
+                    System.out.println("> puke wants a valid task id");
                     continue;
                 }
-                if (id >= num_tasks + 1 || id <= 0) {
-                    System.out.println("> puke says that's an invalid task id");
+                if (id >= numTasks + 1 || id <= 0) {
+                    System.out.println("> puke wants a valid task id");
                     continue;
                 }
                 Task task = tasks[id-1];
                 task.mark();
-                System.out.println(String.format("> puke marked your task [%d]. [X] %s", id, task.getDesc()));
+                System.out.println(String.format("> %d. %s", id, task.toString()));
             }
 
             else if (cmd.equals("unmark")) {
                 if (!tokenizer.hasMoreTokens()) {
-                    System.out.println("> puke says you're missing a task id!");
+                    System.out.println("> puke wants a valid task id");
                     continue;
                 }
-                String id_str = tokenizer.nextToken();
+                String idStr = tokenizer.nextToken();
                 int id;
                 try {
-                    id = Integer.parseInt(id_str);
+                    id = Integer.parseInt(idStr);
                 }
                 catch (NumberFormatException e) {
-                    System.out.println("> puke says that's not a number!");
+                    System.out.println("> puke wants a valid task id");
                     continue;
                 }
-                if (id >= num_tasks + 1 || id <= 0) {
-                    System.out.println("> puke says that's an invalid task id");
+                if (id >= numTasks + 1 || id <= 0) {
+                    System.out.println("> puke wants a valid task id");
                     continue;
                 }
                 Task task = tasks[id-1];
                 task.unmark();
-                System.out.println(String.format("> puke unmarked your task [%d]. [ ] %s", id, task.getDesc()));
+                System.out.println(String.format("> %d. %s", id, task.toString()));
             }
 
             else {
-                if (num_tasks == 100) {
-                    System.out.println("> puke wants you to stop adding more tasks");
-                }
-                else {
-                    tasks[num_tasks++] = new Task(line);
-                    System.out.println("> puke added: " + line);
-                }
+                System.out.println("> puke does not understand you");
             }
         }
 
-        System.out.println("> nvm i'm dipping lol bye");
+        System.out.println("> puke is gonna dip bye");
         scanner.close();
     }
 }
