@@ -1,10 +1,12 @@
 public class Task {
     protected String desc;
     protected boolean isDone;
+    protected TaskType type;
 
     public Task(String desc) {
         this.desc = desc;
         this.isDone = false;
+        this.type = TaskType.TODO;
     }
 
     @Override
@@ -26,5 +28,9 @@ public class Task {
 
     public void unmark() {
         isDone = false;
+    }
+
+    public TaskType getType() {
+        return type;
     }
 }

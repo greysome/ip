@@ -125,4 +125,5 @@ public class Puke {
     private static void printTask(int number, Task task) {
         System.out.println(String.format("> %d. %s", number, task));
     }
+
 }
