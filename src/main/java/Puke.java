@@ -1,177 +1,128 @@
 import java.util.Scanner;
-import java.util.StringTokenizer;
 
 public class Puke {
+    private static final int MAX_TASKS = 100;
+
     public static void main(String[] args) {
         String banner = "██████╗ ██╗   ██╗██╗  ██╗███████╗\n"
-                      + "██╔══██╗██║   ██║██║ ██╔╝██╔════╝\n"
-                      + "██████╔╝██║   ██║█████╔╝ █████╗  \n"
-                      + "██╔═══╝ ██║   ██║██╔═██╗ ██╔══╝  \n"
-                      + "██║     ╚██████╔╝██║  ██╗███████╗\n"
-                      + "╚═╝      ╚═════╝ ╚═╝  ╚═╝╚══════╝";
+                + "██╔══██╗██║   ██║██║ ██╔╝██╔════╝\n"
+                + "██████╔╝██║   ██║█████╔╝ █████╗  \n"
+                + "██╔═══╝ ██║   ██║██╔═██╗ ██╔══╝  \n"
+                + "██║     ╚██████╔╝██║  ██╗███████╗\n"
+                + "╚═╝      ╚═════╝ ╚═╝  ╚═╝╚══════╝";
         Scanner scanner = new Scanner(System.in);
-        Task[] tasks = new Task[100];
+        Task[] tasks = new Task[MAX_TASKS];
         int numTasks = 0;
 
         System.out.println(banner);
         System.out.println("hello i'm puke ask me anyth bro");
-
-        while (true) {
-            String line = scanner.nextLine();
-            StringTokenizer tokenizer = new StringTokenizer(line);
-            if (!tokenizer.hasMoreTokens()) {
+        while (scanner.hasNextLine()) {
+            String line = scanner.nextLine().trim();
+            if (line.isEmpty())
                 continue;
-            }
+            String[] parts = line.split("\\s+", 2);
+            String command = parts[0];
+            String arguments = parts.length == 2 ? parts[1].trim() : "";
 
-            String cmd = tokenizer.nextToken();
-            if (cmd.equals("bye")) {
+            if (command.equals("bye"))
                 break;
-            }
-
-            else if (cmd.equals("todo")) {
-                if (numTasks == 100) {
-                    System.out.println("> puke wants you to stop adding more tasks");
-                    continue;
+            try {
+                switch (command) {
+                case "todo":
+                    if (arguments.isEmpty())
+                        throw new IllegalArgumentException("description");
+                    if (numTasks == MAX_TASKS)
+                        throw new IllegalStateException("full");
+                    tasks[numTasks++] = new Task(arguments);
+                    printTask(numTasks, tasks[numTasks - 1]);
+                    break;
+                case "deadline": {
+                    String[] fields = arguments.split("\\s+/by\\s+", 2);
+                    if (fields.length != 2 || fields[0].isBlank() || fields[1].isBlank())
+                        throw new IllegalArgumentException("deadline");
+                    if (numTasks == MAX_TASKS)
+                        throw new IllegalStateException("full");
+                    tasks[numTasks++] = new Deadline(fields[0].trim(), fields[1].trim());
+                    printTask(numTasks, tasks[numTasks - 1]);
+                    break;
                 }
-
-                StringBuilder descSb = new StringBuilder();
-                while (tokenizer.hasMoreTokens()) {
-                    String token = tokenizer.nextToken();
-                    descSb.append(token);
-                    descSb.append(" ");
+                case "event": {
+                    String[] fields = arguments.split("\\s+/from\\s+|\\s+/to\\s+", 3);
+                    if (fields.length != 3 || fields[0].isBlank() || fields[1].isBlank() || fields[2].isBlank())
+                        throw new IllegalArgumentException("event");
+                    if (numTasks == MAX_TASKS)
+                        throw new IllegalStateException("full");
+                    tasks[numTasks++] = new Event(fields[0].trim(), fields[1].trim(), fields[2].trim());
+                    printTask(numTasks, tasks[numTasks - 1]);
+                    break;
                 }
-                descSb.deleteCharAt(descSb.length() - 1);
-                String descStr = descSb.toString();
-                tasks[numTasks++] = new Task(descStr);
-                System.out.println(String.format("> %d. %s", numTasks, tasks[numTasks - 1].toString()));
-            }
-
-            else if (cmd.equals("deadline")) {
-                if (numTasks == 100) {
-                    System.out.println("> puke wants you to stop adding more tasks");
-                    continue;
+                case "list":
+                    if (!arguments.isEmpty())
+                        throw new IllegalArgumentException("list");
+                    System.out.println("> puke is fetching your list...");
+                    for (int i = 0; i < numTasks; i++)
+                        printTask(i + 1, tasks[i]);
+                    break;
+                case "mark":
+                    tasks = changeStatus(tasks, numTasks, arguments, true);
+                    break;
+                case "unmark":
+                    tasks = changeStatus(tasks, numTasks, arguments, false);
+                    break;
+                case "delete": {
+                    int id = taskId(arguments, numTasks);
+                    Task deleted = tasks[id - 1];
+                    System.arraycopy(tasks, id, tasks, id - 1, numTasks - id);
+                    tasks[--numTasks] = null;
+                    System.out.println("> puke deleted this task: " + deleted);
+                    break;
                 }
-
-                StringBuilder descSb = new StringBuilder();
-                StringBuilder bySb = new StringBuilder();
-                while (tokenizer.hasMoreTokens()) {
-                    String token = tokenizer.nextToken();
-                    if (token.equals("/by"))
-                        break;
-                    descSb.append(token);
-                    descSb.append(" ");
+                case "find":
+                    if (arguments.isEmpty())
+                        throw new IllegalArgumentException("keyword");
+                    System.out.println("> puke found these tasks:");
+                    for (int i = 0; i < numTasks; i++)
+                        if (tasks[i].getDesc().toLowerCase().contains(arguments.toLowerCase()))
+                            printTask(i + 1, tasks[i]);
+                    break;
+                default:
+                    System.out.println("> puke does not understand you");
                 }
-                while (tokenizer.hasMoreTokens()) {
-                    String token = tokenizer.nextToken();
-                    bySb.append(token);
-                    bySb.append(" ");
-                }
-                descSb.deleteCharAt(descSb.length() - 1);
-                bySb.deleteCharAt(bySb.length() - 1);
-                String descStr = descSb.toString();
-                String byStr = bySb.toString();
-                tasks[numTasks++] = new Deadline(descStr, byStr);
-                System.out.println(String.format("> %d. %s", numTasks, tasks[numTasks - 1].toString()));
-            }
-
-            else if (cmd.equals("event")) {
-                if (numTasks == 100) {
-                    System.out.println("> puke wants you to stop adding more tasks");
-                    continue;
-                }
-
-                StringBuilder descSb = new StringBuilder();
-                StringBuilder fromSb = new StringBuilder();
-                StringBuilder toSb = new StringBuilder();
-                while (tokenizer.hasMoreTokens()) {
-                    String token = tokenizer.nextToken();
-                    if (token.equals("/from"))
-                        break;
-                    descSb.append(token);
-                    descSb.append(" ");
-                }
-                while (tokenizer.hasMoreTokens()) {
-                    String token = tokenizer.nextToken();
-                    if (token.equals("/to"))
-                        break;
-                    fromSb.append(token);
-                    fromSb.append(" ");
-                }
-                while (tokenizer.hasMoreTokens()) {
-                    String token = tokenizer.nextToken();
-                    toSb.append(token);
-                    toSb.append(" ");
-                }
-                descSb.deleteCharAt(descSb.length() - 1);
-                fromSb.deleteCharAt(fromSb.length() - 1);
-                toSb.deleteCharAt(toSb.length() - 1);
-                String descStr = descSb.toString();
-                String fromStr = fromSb.toString();
-                String toStr = toSb.toString();
-                tasks[numTasks++] = new Event(descStr, fromStr, toStr);
-                System.out.println(String.format("> %d. %s", numTasks, tasks[numTasks - 1].toString()));
-            }
-
-            else if (cmd.equals("list")) {
-                System.out.println("> puke is fetching your list...");
-                for (int i = 0; i < numTasks; i++) {
-                    Task task = tasks[i];
-                    System.out.println(String.format("> %d. %s", i+1, task.toString()));
-                }
-            }
-
-            else if (cmd.equals("mark")) {
-                if (!tokenizer.hasMoreTokens()) {
-                    System.out.println("> puke wants a valid task id");
-                    continue;
-                }
-                String idStr = tokenizer.nextToken();
-                int id;
-                try {
-                    id = Integer.parseInt(idStr);
-                }
-                catch (NumberFormatException e) {
-                    System.out.println("> puke wants a valid task id");
-                    continue;
-                }
-                if (id >= numTasks + 1 || id <= 0) {
-                    System.out.println("> puke wants a valid task id");
-                    continue;
-                }
-                Task task = tasks[id-1];
-                task.mark();
-                System.out.println(String.format("> %d. %s", id, task.toString()));
-            }
-
-            else if (cmd.equals("unmark")) {
-                if (!tokenizer.hasMoreTokens()) {
-                    System.out.println("> puke wants a valid task id");
-                    continue;
-                }
-                String idStr = tokenizer.nextToken();
-                int id;
-                try {
-                    id = Integer.parseInt(idStr);
-                }
-                catch (NumberFormatException e) {
-                    System.out.println("> puke wants a valid task id");
-                    continue;
-                }
-                if (id >= numTasks + 1 || id <= 0) {
-                    System.out.println("> puke wants a valid task id");
-                    continue;
-                }
-                Task task = tasks[id-1];
-                task.unmark();
-                System.out.println(String.format("> %d. %s", id, task.toString()));
-            }
-
-            else {
-                System.out.println("> puke does not understand you");
+            } catch (IllegalStateException e) {
+                System.out.println("> puke wants you to stop adding more tasks");
+            } catch (IllegalArgumentException e) {
+                System.out.println("> puke wants a valid command and its required arguments");
             }
         }
-
         System.out.println("> puke is gonna dip bye");
         scanner.close();
+    }
+
+    private static Task[] changeStatus(Task[] tasks, int count, String input, boolean mark) {
+        int id = taskId(input, count);
+        if (mark)
+            tasks[id - 1].mark();
+        else
+            tasks[id - 1].unmark();
+        printTask(id, tasks[id - 1]);
+        return tasks;
+    }
+
+    private static int taskId(String input, int count) {
+        if (!input.matches("\\d+") || input.contains(" "))
+            throw new IllegalArgumentException("task id");
+        int id;
+        try {
+            id = Integer.parseInt(input);
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("task id");
+        }
+        if (id < 1 || id > count)
+            throw new IllegalArgumentException("task id");
+        return id;
+    }
+
+    private static void printTask(int number, Task task) {
+        System.out.println(String.format("> %d. %s", number, task));
     }
 }
