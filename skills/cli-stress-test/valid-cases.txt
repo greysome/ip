@@ -1,0 +1,24 @@
+todo buy groceries
+deadline finish report /by Friday
+event team meeting /from 2pm /to 3pm
+todo read book
+list
+mark 1
+mark 2
+mark 3
+mark 4
+unmark 4
+find report
+find meeting
+find book
+delete 4
+delete 1
+list
+todo call Mum
+deadline submit lab /by Monday
+event code review /from 9am /to 10am
+mark 3
+find lab
+delete 5
+list
+bye
