@@ -9,6 +9,11 @@ public class Task {
         this.type = TaskType.TODO;
     }
 
+    public Task(String desc, boolean done) {
+        this(desc);
+        this.isDone = done;
+    }
+
     @Override
     public String toString() {
         return String.format("[T][%s] %s", getStatusIcon(), desc);

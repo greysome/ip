@@ -1,7 +1,14 @@
 import java.util.Scanner;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.List;
 
 public class Puke {
     private static final int MAX_TASKS = 100;
+    private static final String DATA_FILE = "data/puke.txt";
+    private static final DateTimeFormatter INPUT_DATE = DateTimeFormatter.ISO_LOCAL_DATE;
+    private static final DateTimeFormatter OUTPUT_DATE = DateTimeFormatter.ofPattern("MMM d yyyy");
 
     public static void main(String[] args) {
         String banner = "██████╗ ██╗   ██╗██╗  ██╗███████╗\n"
@@ -12,7 +19,10 @@ public class Puke {
                 + "╚═╝      ╚═════╝ ╚═╝  ╚═╝╚══════╝";
         Scanner scanner = new Scanner(System.in);
         Task[] tasks = new Task[MAX_TASKS];
+        Storage storage = new Storage(DATA_FILE);
         int numTasks = 0;
+        List<Task> savedTasks = storage.load();
+        for (Task task : savedTasks) tasks[numTasks++] = task;
 
         System.out.println(banner);
         System.out.println("hello i'm puke ask me anyth bro");
@@ -35,6 +45,7 @@ public class Puke {
                         throw new IllegalStateException("full");
                     tasks[numTasks++] = new Task(arguments);
                     printTask(numTasks, tasks[numTasks - 1]);
+                    storage.save(tasks, numTasks);
                     break;
                 case "deadline": {
                     String[] fields = arguments.split("\\s+/by\\s+", 2);
@@ -42,8 +53,10 @@ public class Puke {
                         throw new IllegalArgumentException("deadline");
                     if (numTasks == MAX_TASKS)
                         throw new IllegalStateException("full");
-                    tasks[numTasks++] = new Deadline(fields[0].trim(), fields[1].trim());
+                    tasks[numTasks] = new Deadline(fields[0].trim(), formatDate(fields[1].trim()));
+                    numTasks++;
                     printTask(numTasks, tasks[numTasks - 1]);
+                    storage.save(tasks, numTasks);
                     break;
                 }
                 case "event": {
@@ -52,8 +65,10 @@ public class Puke {
                         throw new IllegalArgumentException("event");
                     if (numTasks == MAX_TASKS)
                         throw new IllegalStateException("full");
-                    tasks[numTasks++] = new Event(fields[0].trim(), fields[1].trim(), fields[2].trim());
+                    tasks[numTasks] = new Event(fields[0].trim(), fields[1].trim(), fields[2].trim());
+                    numTasks++;
                     printTask(numTasks, tasks[numTasks - 1]);
+                    storage.save(tasks, numTasks);
                     break;
                 }
                 case "list":
@@ -65,9 +80,11 @@ public class Puke {
                     break;
                 case "mark":
                     tasks = changeStatus(tasks, numTasks, arguments, true);
+                    storage.save(tasks, numTasks);
                     break;
                 case "unmark":
                     tasks = changeStatus(tasks, numTasks, arguments, false);
+                    storage.save(tasks, numTasks);
                     break;
                 case "delete": {
                     int id = taskId(arguments, numTasks);
@@ -75,6 +92,7 @@ public class Puke {
                     System.arraycopy(tasks, id, tasks, id - 1, numTasks - id);
                     tasks[--numTasks] = null;
                     System.out.println("> puke deleted this task: " + deleted);
+                    storage.save(tasks, numTasks);
                     break;
                 }
                 case "find":
@@ -124,6 +142,14 @@ public class Puke {
 
     private static void printTask(int number, Task task) {
         System.out.println(String.format("> %d. %s", number, task));
+    }
+
+    private static String formatDate(String input) {
+        try {
+            return LocalDate.parse(input, INPUT_DATE).format(OUTPUT_DATE);
+        } catch (DateTimeParseException e) {
+            throw new IllegalArgumentException("date");
+        }
     }
 
 }

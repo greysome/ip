@@ -15,4 +15,9 @@ public class Deadline extends Task {
     public String getDeadline() {
         return deadline;
     }
+
+    public Deadline(String desc, String deadline, boolean done) {
+        this(desc, deadline);
+        this.isDone = done;
+    }
 }
