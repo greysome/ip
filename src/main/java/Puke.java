@@ -1,14 +1,11 @@
 import java.util.Scanner;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 
 public class Puke {
     private static final int MAX_TASKS = 100;
     private static final String DATA_FILE = "data/puke.txt";
-    private static final DateTimeFormatter INPUT_DATE = DateTimeFormatter.ISO_LOCAL_DATE;
-    private static final DateTimeFormatter OUTPUT_DATE = DateTimeFormatter.ofPattern("MMM d yyyy");
 
     public static void main(String[] args) {
         String banner = "██████╗ ██╗   ██╗██╗  ██╗███████╗\n"
@@ -146,7 +143,7 @@ public class Puke {
 
     private static String formatDate(String input) {
         try {
-            return LocalDate.parse(input, INPUT_DATE).format(OUTPUT_DATE);
+            return LocalDate.parse(input).toString();
         } catch (DateTimeParseException e) {
             throw new IllegalArgumentException("date");
         }
