@@ -21,4 +21,9 @@ public class Event extends Task {
     public String getTo() {
         return to;
     }
+
+    public Event(String desc, String from, String to, boolean done) {
+        this(desc, from, to);
+        this.isDone = done;
+    }
 }
