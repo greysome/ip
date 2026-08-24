@@ -22,12 +22,9 @@ public class Storage {
                 if (fields.length < 3) {
                     continue;
                 }
-                boolean done = fields[1].equals("1");
-                switch (fields[0]) {
-                case "T" -> tasks.add(new Task(fields[2], done));
-                case "D" -> tasks.add(new Deadline(fields[2], fields[3], done));
-                case "E" -> tasks.add(new Event(fields[2], fields[3], fields[4], done));
-                default -> { }
+                Task task = TaskFactory.fromStorageFields(fields);
+                if (task != null) {
+                    tasks.add(task);
                 }
             }
         } catch (IOException | RuntimeException e) {
