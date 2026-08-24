@@ -1,3 +1,5 @@
+package puke;
+
 public class TaskFactory {
     private TaskFactory() {
     }

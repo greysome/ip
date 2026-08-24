@@ -10,7 +10,7 @@ The `error-cases.txt` and `valid-cases.txt` corpora send each line to the CLI ex
 
 1. Compile the application first and identify its main class.
 2. Run one of the two saved corpora:
-   `python3 skills/cli-stress-test/fuzz_cli.py --classpath out --main Puke --input-file skills/cli-stress-test/error-cases.txt`
+   `python3 skills/cli-stress-test/fuzz_cli.py --classpath out --main puke.Puke --input-file skills/cli-stress-test/error-cases.txt`
    Run the valid corpus similarly with `--input-file skills/cli-stress-test/valid-cases.txt`.
 3. Treat a non-zero exit, timeout, Java exception/stack trace, or missing normal termination as a failure.
 
