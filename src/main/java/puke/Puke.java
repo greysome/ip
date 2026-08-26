@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 
+/** Runs the command-line interface for the Puke task manager. */
 public class Puke {
     private static final int MAX_TASKS = 100;
     private static final String DATA_FILE = "data/puke.txt";

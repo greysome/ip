@@ -6,13 +6,20 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+/** Persists tasks to and loads tasks from a local file. */
 public class Storage {
     private final Path path;
 
+    /**
+     * Creates storage backed by the given file.
+     *
+     * @param fileName Storage file path.
+     */
     public Storage(String fileName) {
         path = Path.of(fileName);
     }
 
+    /** Loads all valid tasks from disk. */
     public List<Task> load() {
         List<Task> tasks = new ArrayList<>();
         if (!Files.exists(path)) {
@@ -35,6 +42,12 @@ public class Storage {
         return tasks;
     }
 
+    /**
+     * Saves the first {@code count} tasks to disk.
+     *
+     * @param tasks Tasks to save.
+     * @param count Number of tasks to save.
+     */
     public void save(Task[] tasks, int count) {
         try {
             Path parent = path.getParent();

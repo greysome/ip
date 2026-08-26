@@ -1,9 +1,16 @@
 package puke;
 
+/** Reconstructs tasks from their serialized storage representation. */
 public class TaskFactory {
     private TaskFactory() {
     }
 
+    /**
+     * Reconstructs a task from one serialized storage record.
+     *
+     * @param fields Serialized task fields.
+     * @return Reconstructed task, or {@code null} for an unknown task type.
+     */
     public static Task fromStorageFields(String[] fields) {
         boolean done = fields[1].equals("1");
         return switch (fields[0]) {
