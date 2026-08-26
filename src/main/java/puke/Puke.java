@@ -1,9 +1,9 @@
 package puke;
 
-import java.util.Scanner;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.List;
+import java.util.Scanner;
 
 public class Puke {
     private static final int MAX_TASKS = 100;
@@ -21,89 +21,105 @@ public class Puke {
         Storage storage = new Storage(DATA_FILE);
         int numTasks = 0;
         List<Task> savedTasks = storage.load();
-        for (Task task : savedTasks) tasks[numTasks++] = task;
+        for (Task task : savedTasks) {
+            tasks[numTasks++] = task;
+        }
 
         System.out.println(banner);
         System.out.println("hello i'm puke ask me anyth bro");
         while (scanner.hasNextLine()) {
             String line = scanner.nextLine().trim();
-            if (line.isEmpty())
+            if (line.isEmpty()) {
                 continue;
+            }
             String[] parts = line.split("\\s+", 2);
             String command = parts[0];
             String arguments = parts.length == 2 ? parts[1].trim() : "";
 
-            if (command.equals("bye"))
+            if (command.equals("bye")) {
                 break;
+            }
             try {
                 switch (command) {
-                case "todo":
-                    if (arguments.isEmpty())
-                        throw new IllegalArgumentException("description");
-                    if (numTasks == MAX_TASKS)
-                        throw new IllegalStateException("full");
-                    tasks[numTasks++] = new Task(arguments);
-                    printTask(numTasks, tasks[numTasks - 1]);
-                    storage.save(tasks, numTasks);
-                    break;
-                case "deadline": {
-                    String[] fields = arguments.split("\\s+/by\\s+", 2);
-                    if (fields.length != 2 || fields[0].isBlank() || fields[1].isBlank())
-                        throw new IllegalArgumentException("deadline");
-                    if (numTasks == MAX_TASKS)
-                        throw new IllegalStateException("full");
-                    tasks[numTasks] = new Deadline(fields[0].trim(), formatDate(fields[1].trim()));
-                    numTasks++;
-                    printTask(numTasks, tasks[numTasks - 1]);
-                    storage.save(tasks, numTasks);
-                    break;
-                }
-                case "event": {
-                    String[] fields = arguments.split("\\s+/from\\s+|\\s+/to\\s+", 3);
-                    if (fields.length != 3 || fields[0].isBlank() || fields[1].isBlank() || fields[2].isBlank())
-                        throw new IllegalArgumentException("event");
-                    if (numTasks == MAX_TASKS)
-                        throw new IllegalStateException("full");
-                    tasks[numTasks] = new Event(fields[0].trim(), fields[1].trim(), fields[2].trim());
-                    numTasks++;
-                    printTask(numTasks, tasks[numTasks - 1]);
-                    storage.save(tasks, numTasks);
-                    break;
-                }
-                case "list":
-                    if (!arguments.isEmpty())
-                        throw new IllegalArgumentException("list");
-                    System.out.println("> puke is fetching your list...");
-                    for (int i = 0; i < numTasks; i++)
-                        printTask(i + 1, tasks[i]);
-                    break;
-                case "mark":
-                    tasks = changeStatus(tasks, numTasks, arguments, true);
-                    storage.save(tasks, numTasks);
-                    break;
-                case "unmark":
-                    tasks = changeStatus(tasks, numTasks, arguments, false);
-                    storage.save(tasks, numTasks);
-                    break;
-                case "delete": {
-                    int id = taskId(arguments, numTasks);
-                    Task deleted = tasks[id - 1];
-                    System.arraycopy(tasks, id, tasks, id - 1, numTasks - id);
-                    tasks[--numTasks] = null;
-                    System.out.println("> puke deleted this task: " + deleted);
-                    storage.save(tasks, numTasks);
-                    break;
-                }
-                case "find":
-                    if (arguments.isEmpty())
-                        throw new IllegalArgumentException("keyword");
-                    System.out.println("> puke found these tasks:");
-                    for (int i = 0; i < numTasks; i++)
-                        if (tasks[i].getDesc().toLowerCase().contains(arguments.toLowerCase()))
+                    case "todo":
+                        if (arguments.isEmpty()) {
+                            throw new IllegalArgumentException("description");
+                        }
+                        if (numTasks == MAX_TASKS) {
+                            throw new IllegalStateException("full");
+                        }
+                        tasks[numTasks++] = new Task(arguments);
+                        printTask(numTasks, tasks[numTasks - 1]);
+                        storage.save(tasks, numTasks);
+                        break;
+                    case "deadline": {
+                        String[] fields = arguments.split("\\s+/by\\s+", 2);
+                        if (fields.length != 2 || fields[0].isBlank() || fields[1].isBlank()) {
+                            throw new IllegalArgumentException("deadline");
+                        }
+                        if (numTasks == MAX_TASKS) {
+                            throw new IllegalStateException("full");
+                        }
+                        tasks[numTasks] = new Deadline(fields[0].trim(), formatDate(fields[1].trim()));
+                        numTasks++;
+                        printTask(numTasks, tasks[numTasks - 1]);
+                        storage.save(tasks, numTasks);
+                        break;
+                    }
+                    case "event": {
+                        String[] fields = arguments.split("\\s+/from\\s+|\\s+/to\\s+", 3);
+                        if (fields.length != 3 || fields[0].isBlank() || fields[1].isBlank()
+                                || fields[2].isBlank()) {
+                            throw new IllegalArgumentException("event");
+                        }
+                        if (numTasks == MAX_TASKS) {
+                            throw new IllegalStateException("full");
+                        }
+                        tasks[numTasks] = new Event(fields[0].trim(), fields[1].trim(), fields[2].trim());
+                        numTasks++;
+                        printTask(numTasks, tasks[numTasks - 1]);
+                        storage.save(tasks, numTasks);
+                        break;
+                    }
+                    case "list":
+                        if (!arguments.isEmpty()) {
+                            throw new IllegalArgumentException("list");
+                        }
+                        System.out.println("> puke is fetching your list...");
+                        for (int i = 0; i < numTasks; i++) {
                             printTask(i + 1, tasks[i]);
-                    break;
-                default:
-                    System.out.println("> puke does not understand you");
+                        }
+                        break;
+                    case "mark":
+                        tasks = changeStatus(tasks, numTasks, arguments, true);
+                        storage.save(tasks, numTasks);
+                        break;
+                    case "unmark":
+                        tasks = changeStatus(tasks, numTasks, arguments, false);
+                        storage.save(tasks, numTasks);
+                        break;
+                    case "delete": {
+                        int id = taskId(arguments, numTasks);
+                        Task deleted = tasks[id - 1];
+                        System.arraycopy(tasks, id, tasks, id - 1, numTasks - id);
+                        tasks[--numTasks] = null;
+                        System.out.println("> puke deleted this task: " + deleted);
+                        storage.save(tasks, numTasks);
+                        break;
+                    }
+                    case "find":
+                        if (arguments.isEmpty()) {
+                            throw new IllegalArgumentException("keyword");
+                        }
+                        System.out.println("> puke found these tasks:");
+                        for (int i = 0; i < numTasks; i++) {
+                            if (tasks[i].getDesc().toLowerCase().contains(arguments.toLowerCase())) {
+                                printTask(i + 1, tasks[i]);
+                            }
+                        }
+                        break;
+                    default:
+                        System.out.println("> puke does not understand you");
                 }
             } catch (IllegalStateException e) {
                 System.out.println("> puke wants you to stop adding more tasks");
@@ -117,10 +133,11 @@ public class Puke {
 
     private static Task[] changeStatus(Task[] tasks, int count, String input, boolean mark) {
         int id = taskId(input, count);
-        if (mark)
+        if (mark) {
             tasks[id - 1].mark();
-        else
+        } else {
             tasks[id - 1].unmark();
+        }
         printTask(id, tasks[id - 1]);
         return tasks;
     }
@@ -134,8 +151,9 @@ public class Puke {
         } catch (NumberFormatException e) {
             throw new IllegalArgumentException("task id");
         }
-        if (id < 1 || id > count)
+        if (id < 1 || id > count) {
             throw new IllegalArgumentException("task id");
+        }
         return id;
     }
 
