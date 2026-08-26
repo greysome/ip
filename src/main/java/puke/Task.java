@@ -29,6 +29,11 @@ public class Task {
         return desc;
     }
 
+    /** Returns whether this task description contains the given keyword. */
+    public boolean matchesKeyword(String keyword) {
+        return desc.toLowerCase().contains(keyword.toLowerCase());
+    }
+
     public void mark() {
         isDone = true;
     }
