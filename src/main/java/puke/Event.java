@@ -1,9 +1,17 @@
 package puke;
 
+/** Represents a task scheduled between a start and end time. */
 public class Event extends Task {
     protected String from;
     protected String to;
 
+    /**
+     * Creates an event with start and end descriptions.
+     *
+     * @param desc Event description.
+     * @param from Event start.
+     * @param to Event end.
+     */
     public Event(String desc, String from, String to) {
         super(desc);
         this.from = from;
@@ -24,6 +32,14 @@ public class Event extends Task {
         return to;
     }
 
+    /**
+     * Creates an event with the given completion state.
+     *
+     * @param desc Event description.
+     * @param from Event start.
+     * @param to Event end.
+     * @param done Whether the event is complete.
+     */
     public Event(String desc, String from, String to, boolean done) {
         this(desc, from, to);
         this.isDone = done;
