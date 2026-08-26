@@ -99,7 +99,7 @@ public class Puke {
                         throw new IllegalArgumentException("keyword");
                     System.out.println("> puke found these tasks:");
                     for (int i = 0; i < numTasks; i++)
-                        if (tasks[i].getDesc().toLowerCase().contains(arguments.toLowerCase()))
+                        if (tasks[i].matchesKeyword(arguments))
                             printTask(i + 1, tasks[i]);
                     break;
                 default:
