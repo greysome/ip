@@ -88,7 +88,6 @@ public class Puke {
                         }
                         System.out.println("> puke is fetching your list...");
                         for (int i = 0; i < numTasks; i++) {
->>>>>>> branch-A-CodingStandard
                             printTask(i + 1, tasks[i]);
                         }
                         break;
