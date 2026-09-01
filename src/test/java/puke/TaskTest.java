@@ -34,6 +34,12 @@ class TaskTest {
     }
 
     @Test
+    void taskFactoryAcceptsIndividualStorageFields() {
+        assertEquals("[T][ ] buy milk",
+                TaskFactory.fromStorageFields("T", "0", "buy milk").toString());
+    }
+
+    @Test
     void responseProcessesTaskCommands() throws IOException {
         Path file = Files.createTempFile("puke", ".txt");
         try {
