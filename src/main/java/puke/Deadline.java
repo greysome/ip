@@ -20,15 +20,6 @@ public class Deadline extends Task {
         this.type = TaskType.DEADLINE;
     }
 
-    @Override
-    public String toString() {
-        return String.format("[D][%s] %s (by: %s)", getStatusIcon(), desc, deadline.format(DISPLAY_FORMAT));
-    }
-
-    public String getDeadline() {
-        return deadline.toString();
-    }
-
     /**
      * Creates a deadline with the given completion state.
      *
@@ -39,5 +30,14 @@ public class Deadline extends Task {
     public Deadline(String desc, String deadline, boolean done) {
         this(desc, deadline);
         this.isDone = done;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("[D][%s] %s (by: %s)", getStatusIcon(), desc, deadline.format(DISPLAY_FORMAT));
+    }
+
+    public String getDeadline() {
+        return deadline.toString();
     }
 }

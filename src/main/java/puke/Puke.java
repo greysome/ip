@@ -144,8 +144,9 @@ public class Puke {
     }
 
     private static int taskId(String input, int count) {
-        if (!input.matches("\\d+") || input.contains(" "))
+        if (!input.matches("\\d+") || input.contains(" ")) {
             throw new IllegalArgumentException("task id");
+        }
         int id;
         try {
             id = Integer.parseInt(input);

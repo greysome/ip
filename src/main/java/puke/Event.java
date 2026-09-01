@@ -19,19 +19,6 @@ public class Event extends Task {
         this.type = TaskType.EVENT;
     }
 
-    @Override
-    public String toString() {
-        return String.format("[E][%s] %s (from: %s to: %s)", getStatusIcon(), desc, from, to);
-    }
-
-    public String getFrom() {
-        return from;
-    }
-
-    public String getTo() {
-        return to;
-    }
-
     /**
      * Creates an event with the given completion state.
      *
@@ -43,5 +30,18 @@ public class Event extends Task {
     public Event(String desc, String from, String to, boolean done) {
         this(desc, from, to);
         this.isDone = done;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("[E][%s] %s (from: %s to: %s)", getStatusIcon(), desc, from, to);
+    }
+
+    public String getFrom() {
+        return from;
+    }
+
+    public String getTo() {
+        return to;
     }
 }
