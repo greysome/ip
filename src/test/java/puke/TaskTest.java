@@ -3,6 +3,10 @@ package puke;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+
 import org.junit.jupiter.api.Test;
 
 class TaskTest {
@@ -27,5 +31,17 @@ class TaskTest {
     void deadlineFormatsDate() {
         assertEquals("[D][ ] submit report (by: Aug 24 2026)",
                 new Deadline("submit report", "2026-08-24").toString());
+    }
+
+    @Test
+    void responseProcessesTaskCommands() throws IOException {
+        Path file = Files.createTempFile("puke", ".txt");
+        try {
+            Puke puke = new Puke(file.toString());
+            assertEquals("> 1. [T][ ] buy milk", puke.getResponse("todo buy milk"));
+            assertTrue(puke.getResponse("list").contains("[T][ ] buy milk"));
+        } finally {
+            Files.deleteIfExists(file);
+        }
     }
 }
