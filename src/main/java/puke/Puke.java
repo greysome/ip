@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 /** Runs the Puke task manager and processes user commands. */
 public class Puke {
@@ -124,8 +126,11 @@ public class Puke {
             throw new IllegalArgumentException("list");
         }
         StringBuilder response = new StringBuilder("> puke is fetching your list...");
-        for (int i = 0; i < numTasks; i++) {
-            response.append(System.lineSeparator()).append(formatTask(i + 1, tasks[i]));
+        String taskList = IntStream.range(0, numTasks)
+                .mapToObj(i -> formatTask(i + 1, tasks[i]))
+                .collect(Collectors.joining(System.lineSeparator()));
+        if (!taskList.isEmpty()) {
+            response.append(System.lineSeparator()).append(taskList);
         }
         return response.toString();
     }
