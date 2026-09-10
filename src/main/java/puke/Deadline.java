@@ -40,4 +40,11 @@ public class Deadline extends Task {
     public String getDeadline() {
         return deadline.toString();
     }
+
+    @Override
+    public boolean hasSameDetails(Task other) {
+        return super.hasSameDetails(other)
+                && other instanceof Deadline otherDeadline
+                && deadline.equals(otherDeadline.deadline);
+    }
 }

@@ -46,6 +46,11 @@ public class Task {
         return desc.toLowerCase().contains(keyword.toLowerCase());
     }
 
+    /** Returns whether another task has the same type and description. */
+    public boolean hasSameDetails(Task other) {
+        return other != null && type == other.type && desc.equals(other.desc);
+    }
+
     public void mark() {
         isDone = true;
     }
