@@ -115,7 +115,7 @@ public class Puke {
             throw new IllegalStateException("full");
         }
         tasks[numTasks++] = task;
-        storage.save(tasks, numTasks);
+        saveTasks();
         return formatTask(numTasks, task);
     }
 
@@ -137,7 +137,7 @@ public class Puke {
         } else {
             tasks[id - 1].unmark();
         }
-        storage.save(tasks, numTasks);
+        saveTasks();
         return formatTask(id, tasks[id - 1]);
     }
 
@@ -146,8 +146,12 @@ public class Puke {
         Task deleted = tasks[id - 1];
         System.arraycopy(tasks, id, tasks, id - 1, numTasks - id);
         tasks[--numTasks] = null;
-        storage.save(tasks, numTasks);
+        saveTasks();
         return "> puke deleted this task: " + deleted;
+    }
+
+    private void saveTasks() {
+        storage.save(tasks, numTasks);
     }
 
     private String findTasks(String keyword) {
