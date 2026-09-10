@@ -24,6 +24,7 @@ public class Puke {
         storage = new Storage(dataFile);
         List<Task> savedTasks = storage.load();
         for (Task task : savedTasks) {
+            assert numTasks < MAX_TASKS : "loaded task count exceeds capacity";
             tasks[numTasks++] = task;
         }
     }
@@ -108,6 +109,8 @@ public class Puke {
     }
 
     private String addTask(Task task) {
+        assert task != null : "task to add must not be null";
+        assert numTasks >= 0 && numTasks <= MAX_TASKS : "task count is out of bounds";
         if (numTasks == MAX_TASKS) {
             throw new IllegalStateException("full");
         }
