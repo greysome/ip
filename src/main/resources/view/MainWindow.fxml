@@ -13,7 +13,7 @@
     <children>
         <ScrollPane fx:id="scrollPane" fitToWidth="true" hbarPolicy="NEVER">
             <content>
-                <VBox fx:id="dialogContainer" />
+                <VBox fx:id="dialogContainer" spacing="8.0" />
             </content>
             <AnchorPane.bottomAnchor>42.0</AnchorPane.bottomAnchor>
             <AnchorPane.leftAnchor>0.0</AnchorPane.leftAnchor>

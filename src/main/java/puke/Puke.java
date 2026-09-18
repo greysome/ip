@@ -113,12 +113,24 @@ public class Puke {
     private String addTask(Task task) {
         assert task != null : "task to add must not be null";
         assert numTasks >= 0 && numTasks <= MAX_TASKS : "task count is out of bounds";
+        if (containsDuplicate(task)) {
+            return "> puke already has this task: " + task;
+        }
         if (numTasks == MAX_TASKS) {
             throw new IllegalStateException("full");
         }
         tasks[numTasks++] = task;
         saveTasks();
         return formatTask(numTasks, task);
+    }
+
+    private boolean containsDuplicate(Task candidate) {
+        for (int i = 0; i < numTasks; i++) {
+            if (tasks[i].hasSameDetails(candidate)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private String listTasks(String arguments) {

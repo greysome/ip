@@ -44,4 +44,12 @@ public class Event extends Task {
     public String getTo() {
         return to;
     }
+
+    @Override
+    public boolean hasSameDetails(Task other) {
+        return super.hasSameDetails(other)
+                && other instanceof Event otherEvent
+                && from.equals(otherEvent.from)
+                && to.equals(otherEvent.to);
+    }
 }

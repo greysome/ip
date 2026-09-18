@@ -50,4 +50,17 @@ class TaskTest {
             Files.deleteIfExists(file);
         }
     }
+
+    @Test
+    void duplicateTasksAreRejected() throws IOException {
+        Path file = Files.createTempFile("puke", ".txt");
+        try {
+            Puke puke = new Puke(file.toString());
+            assertEquals("> 1. [T][ ] buy milk", puke.getResponse("todo buy milk"));
+            assertEquals("> puke already has this task: [T][ ] buy milk",
+                    puke.getResponse("todo buy milk"));
+        } finally {
+            Files.deleteIfExists(file);
+        }
+    }
 }
