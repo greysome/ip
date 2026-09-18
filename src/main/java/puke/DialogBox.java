@@ -28,6 +28,7 @@ public class DialogBox extends HBox {
         } catch (IOException e) {
             throw new IllegalStateException("Unable to load a chat message", e);
         }
+        getStyleClass().add(isUser ? "user-message" : "puke-message");
         speaker.setText(speakerName);
         dialog.setText(text);
         if (!isUser) {

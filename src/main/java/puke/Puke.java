@@ -34,7 +34,7 @@ public class Puke {
     public static void main(String[] args) {
         Puke puke = new Puke();
         System.out.println(getBanner());
-        System.out.println("hello i'm puke ask me anyth bro");
+        System.out.println("Hello! I'm Puke, your mildly dramatic task sprite.");
 
         try (Scanner scanner = new Scanner(System.in)) {
             while (scanner.hasNextLine() && !puke.isExitRequested()) {
@@ -73,12 +73,12 @@ public class Puke {
                 case "delete" -> deleteTask(arguments);
                 case "find" -> findTasks(arguments);
                 case "bye" -> exit();
-                default -> "> puke does not understand you";
+                default -> "> Puke is puzzled. Try a supported command.";
             };
         } catch (IllegalStateException e) {
-            return "> puke wants you to stop adding more tasks";
+            return "> Puke's task shelf is full.";
         } catch (IllegalArgumentException e) {
-            return "> puke wants a valid command and its required arguments";
+            return "> Puke needs a valid command and its required arguments.";
         }
     }
 
@@ -186,7 +186,7 @@ public class Puke {
 
     private String exit() {
         exitRequested = true;
-        return "> puke is gonna dip bye";
+        return "> Puke is logging off. Keep your tasks tidy!";
     }
 
     private int taskId(String input) {

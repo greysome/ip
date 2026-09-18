@@ -16,7 +16,7 @@ public class MainApp extends Application {
             FXMLLoader loader = new FXMLLoader(MainApp.class.getResource("/view/MainWindow.fxml"));
             AnchorPane root = loader.load();
             Scene scene = new Scene(root);
-            stage.setTitle("Puke");
+            stage.setTitle("Puke - Task Sprite");
             stage.setScene(scene);
             loader.<MainWindow>getController().setPuke(new Puke());
             stage.show();
