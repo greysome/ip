@@ -104,4 +104,26 @@ class TaskTest {
             Files.deleteIfExists(file);
         }
     }
+
+    @Test
+    void nullInputIsIgnored() throws IOException {
+        Path file = Files.createTempFile("puke", ".txt");
+        try {
+            assertEquals("", new Puke(file.toString()).getResponse(null));
+        } finally {
+            Files.deleteIfExists(file);
+        }
+    }
+
+    @Test
+    void saveFailureIsReportedToTheUser() throws IOException {
+        Path directory = Files.createTempDirectory("puke");
+        try {
+            Puke puke = new Puke(directory.toString());
+            assertEquals("> Puke could not save your tasks.",
+                    puke.getResponse("todo read book"));
+        } finally {
+            Files.deleteIfExists(directory);
+        }
+    }
 }
