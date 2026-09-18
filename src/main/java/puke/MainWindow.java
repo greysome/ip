@@ -30,7 +30,8 @@ public class MainWindow extends AnchorPane {
      */
     public void setPuke(Puke puke) {
         this.puke = puke;
-        dialogContainer.getChildren().add(DialogBox.getPukeDialog("Hello! What can I do for you?"));
+        dialogContainer.getChildren().add(DialogBox.getPukeDialog(
+                "Hey! I'm Puke, your mildly dramatic task sprite."));
     }
 
     /** Adds the user's command and Puke's response to the chat. */

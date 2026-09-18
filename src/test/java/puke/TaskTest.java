@@ -80,7 +80,7 @@ class TaskTest {
             assertTrue(puke.getResponse("find return").contains("return book"));
             assertTrue(puke.getResponse("delete 2").contains("return book"));
             assertFalse(puke.getResponse("list").contains("return book"));
-            assertEquals("> puke is gonna dip bye", puke.getResponse("bye"));
+            assertEquals("> Puke is logging off. Keep your tasks tidy!", puke.getResponse("bye"));
             assertTrue(puke.isExitRequested());
         } finally {
             Files.deleteIfExists(file);
@@ -92,14 +92,14 @@ class TaskTest {
         Path file = Files.createTempFile("puke", ".txt");
         try {
             Puke puke = new Puke(file.toString());
-            String error = "> puke wants a valid command and its required arguments";
+            String error = "> Puke needs a valid command and its required arguments.";
             assertEquals(error, puke.getResponse("todo"));
             assertEquals(error, puke.getResponse("deadline report"));
             assertEquals(error, puke.getResponse("event meeting /from 2pm"));
             assertEquals(error, puke.getResponse("list extra"));
             assertEquals(error, puke.getResponse("mark 1"));
             assertEquals(error, puke.getResponse("find"));
-            assertEquals("> puke does not understand you", puke.getResponse("unknown"));
+            assertEquals("> Puke is puzzled. Try a supported command.", puke.getResponse("unknown"));
         } finally {
             Files.deleteIfExists(file);
         }
