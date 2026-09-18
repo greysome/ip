@@ -24,4 +24,11 @@ class StorageTest {
             Files.deleteIfExists(file);
         }
     }
+
+    @Test
+    void loadsAnEmptyListWhenStorageFileDoesNotExist() throws Exception {
+        Path file = Files.createTempFile("puke", ".txt");
+        Files.deleteIfExists(file);
+        assertEquals(0, new Storage(file.toString()).load().size());
+    }
 }
