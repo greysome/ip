@@ -31,12 +31,16 @@ public class Storage {
                 if (fields.length < 3) {
                     continue;
                 }
-                Task task = TaskFactory.fromStorageFields(fields);
-                if (task != null) {
-                    tasks.add(task);
+                try {
+                    Task task = TaskFactory.fromStorageFields(fields);
+                    if (task != null) {
+                        tasks.add(task);
+                    }
+                } catch (RuntimeException e) {
+                    // Ignore malformed records and continue loading valid tasks.
                 }
             }
-        } catch (IOException | RuntimeException e) {
+        } catch (IOException e) {
             return new ArrayList<>();
         }
         return tasks;
@@ -48,7 +52,7 @@ public class Storage {
      * @param tasks Tasks to save.
      * @param count Number of tasks to save.
      */
-    public void save(Task[] tasks, int count) {
+    public boolean save(Task[] tasks, int count) {
         try {
             Path parent = path.getParent();
             if (parent != null) {
@@ -67,8 +71,9 @@ public class Storage {
                 }
             }
             Files.write(path, lines);
+            return true;
         } catch (IOException e) {
-            System.out.println("> puke could not save your tasks");
+            return false;
         }
     }
 }

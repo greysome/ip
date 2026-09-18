@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 
@@ -30,5 +31,23 @@ class StorageTest {
         Path file = Files.createTempFile("puke", ".txt");
         Files.deleteIfExists(file);
         assertEquals(0, new Storage(file.toString()).load().size());
+    }
+
+    @Test
+    void skipsMalformedRecordsAndKeepsValidTasks() throws Exception {
+        Path file = Files.createTempFile("puke", ".txt");
+        try {
+            Files.write(file, List.of(
+                    "T|0|read book",
+                    "D|0|broken deadline|not-a-date",
+                    "E|1|project meeting|2pm|4pm"));
+            var loaded = new Storage(file.toString()).load();
+            assertEquals(2, loaded.size());
+            assertEquals("[T][ ] read book", loaded.get(0).toString());
+            assertEquals("[E][X] project meeting (from: 2pm to: 4pm)",
+                    loaded.get(1).toString());
+        } finally {
+            Files.deleteIfExists(file);
+        }
     }
 }

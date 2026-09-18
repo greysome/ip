@@ -53,12 +53,15 @@ public class Puke {
      * @return the response generated for the command
      */
     public String getResponse(String input) {
+        if (input == null) {
+            return "";
+        }
         String line = input.trim();
         if (line.isEmpty()) {
             return "";
         }
 
-        String[] parts = line.split("\s+", 2);
+        String[] parts = line.split("\\s+", 2);
         String command = parts[0];
         String arguments = parts.length == 2 ? parts[1].trim() : "";
 
@@ -95,7 +98,7 @@ public class Puke {
     }
 
     private String addDeadline(String input) {
-        String[] fields = input.split("\s+/by\s+", 2);
+        String[] fields = input.split("\\s+/by\\s+", 2);
         if (fields.length != 2 || fields[0].isBlank() || fields[1].isBlank()) {
             throw new IllegalArgumentException("deadline");
         }
@@ -103,7 +106,7 @@ public class Puke {
     }
 
     private String addEvent(String input) {
-        String[] fields = input.split("\s+/from\s+|\s+/to\s+", 3);
+        String[] fields = input.split("\\s+/from\\s+|\\s+/to\\s+", 3);
         if (fields.length != 3 || fields[0].isBlank() || fields[1].isBlank() || fields[2].isBlank()) {
             throw new IllegalArgumentException("event");
         }
@@ -120,7 +123,9 @@ public class Puke {
             throw new IllegalStateException("full");
         }
         tasks[numTasks++] = task;
-        saveTasks();
+        if (!saveTasks()) {
+            return "> Puke could not save your tasks.";
+        }
         return formatTask(numTasks, task);
     }
 
@@ -154,7 +159,9 @@ public class Puke {
         } else {
             tasks[id - 1].unmark();
         }
-        saveTasks();
+        if (!saveTasks()) {
+            return "> Puke could not save your tasks.";
+        }
         return formatTask(id, tasks[id - 1]);
     }
 
@@ -163,12 +170,14 @@ public class Puke {
         Task deleted = tasks[id - 1];
         System.arraycopy(tasks, id, tasks, id - 1, numTasks - id);
         tasks[--numTasks] = null;
-        saveTasks();
+        if (!saveTasks()) {
+            return "> Puke could not save your tasks.";
+        }
         return "> puke deleted this task: " + deleted;
     }
 
-    private void saveTasks() {
-        storage.save(tasks, numTasks);
+    private boolean saveTasks() {
+        return storage.save(tasks, numTasks);
     }
 
     private String findTasks(String keyword) {
